@@ -153,23 +153,27 @@ public class BgmsBlogController {
         return CommonResult.success(CommonPage.restPage(lists));
     }
 
-    @ApiOperation(value = "批量删除博文")
+    @ApiOperation(value = "删除单个博文")
     @RequestMapping(value = "/blogdel", method = RequestMethod.POST)
     @ResponseBody
     //@RequestParam：将请求参数绑定到你控制器的方法参数上（是springmvc中接收普通参数的注解）
-    public CommonResult<BgmsBlog> blogdel(
+    public CommonResult blogdel(
             Principal principal,
-            @RequestParam("ids") List<Long> ids){
+            @RequestParam("id") Long id){
         //获取当前登录对象的id，判断当前博文是否是当前对象的;
         if(principal==null){
             return CommonResult.unauthorized(null);
         }
 
-//        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
-//        MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
-//        if(memberDetails.getId() == bgmsBlogParam.getUmsId()){
-//            return CommonResult.forbidden(null);
-//        }
-        return null;
+        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+        MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
+
+        int count = bgmsBlogService.blogdel(memberDetails.getId() , id);
+
+        //说明当前博文和登陆人不一致，没有权限
+        if(count == 0){
+            return CommonResult.forbidden(null);
+        }
+        return CommonResult.success("已删除");
     }
 }

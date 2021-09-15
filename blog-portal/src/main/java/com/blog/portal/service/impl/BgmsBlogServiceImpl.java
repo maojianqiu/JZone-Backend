@@ -3,6 +3,7 @@ package com.blog.portal.service.impl;
 import com.blog.mbg.mapper.BgmsBlogMapper;
 import com.blog.mbg.model.BgmsBlog;
 import com.blog.mbg.model.BgmsBlogExample;
+import com.blog.mbg.model.BgmsTagExample;
 import com.blog.portal.dto.BgmsBlogParam;
 import com.blog.portal.service.BgmsBlogService;
 import com.github.pagehelper.PageHelper;
@@ -76,13 +77,24 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         if (!StringUtils.isEmpty(keyword)) {
             criteria.andTitleLike("%" + keyword + "%");
         }
+        //获取当前登陆账号的所有博文
         criteria.andUmsIdEqualTo(userId);
+        //获取除已删除外所有的博文
+        criteria.andStateNotEqualTo(4);
         List<BgmsBlog> lists = bgmsBlogMapper.selectByExample(example);
         return lists;
     }
 
     @Override
-    public int blogdel(List<Long> ids) {
+    public int blogdel(Long umsId , Long id) {
+
+        BgmsBlog bgmsBlog = bgmsBlogMapper.selectByPrimaryKey(id);
+        if(bgmsBlog.getUmsId() == umsId){
+            bgmsBlog.setState(4);
+            int count = bgmsBlogMapper.updateByPrimaryKeySelective(bgmsBlog);
+            return count;
+
+        }
         return 0;
     }
 }

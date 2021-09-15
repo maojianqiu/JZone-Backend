@@ -29,5 +29,5 @@ public interface BgmsBlogService {
     /*
      * 批量删除博文;
      * */
-    public int blogdel(List<Long> ids);
+    public int blogdel(Long umsId,Long id);
 }
