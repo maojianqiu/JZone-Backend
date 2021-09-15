@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mbg.mapper.BgmsBlogMapper">
+  <resultMap id="BaseResultMap" type="com.blog.mbg.model.BgmsBlog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="appreciation" jdbcType="BIT" property="appreciation" />
+    <result column="commentabled" jdbcType="BIT" property="commentabled" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="first_picture" jdbcType="VARCHAR" property="firstPicture" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="flag" jdbcType="BIT" property="flag" />
+    <result column="flag_url" jdbcType="VARCHAR" property="flagUrl" />
+    <result column="recommend" jdbcType="BIT" property="recommend" />
+    <result column="share_statement" jdbcType="BIT" property="shareStatement" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="ums_id" jdbcType="BIGINT" property="umsId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.mbg.model.BgmsBlog">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, appreciation, commentabled, title, description, first_picture, create_time, update_time, 
+    flag, flag_url, recommend, share_statement, state, ums_id
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.blog.mbg.model.BgmsBlogExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bgms_blog
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.blog.mbg.model.BgmsBlogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from bgms_blog
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bgms_blog
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from bgms_blog
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.blog.mbg.model.BgmsBlogExample">
+    delete from bgms_blog
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.blog.mbg.model.BgmsBlog">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bgms_blog (appreciation, commentabled, title, 
+      description, first_picture, create_time, 
+      update_time, flag, flag_url, 
+      recommend, share_statement, state, 
+      ums_id, content)
+    values (#{appreciation,jdbcType=BIT}, #{commentabled,jdbcType=BIT}, #{title,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{firstPicture,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=BIT}, #{flagUrl,jdbcType=VARCHAR}, 
+      #{recommend,jdbcType=BIT}, #{shareStatement,jdbcType=BIT}, #{state,jdbcType=INTEGER}, 
+      #{umsId,jdbcType=BIGINT}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.blog.mbg.model.BgmsBlog">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bgms_blog
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="appreciation != null">
+        appreciation,
+      </if>
+      <if test="commentabled != null">
+        commentabled,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="firstPicture != null">
+        first_picture,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+      <if test="flagUrl != null">
+        flag_url,
+      </if>
+      <if test="recommend != null">
+        recommend,
+      </if>
+      <if test="shareStatement != null">
+        share_statement,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="umsId != null">
+        ums_id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="appreciation != null">
+        #{appreciation,jdbcType=BIT},
+      </if>
+      <if test="commentabled != null">
+        #{commentabled,jdbcType=BIT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="firstPicture != null">
+        #{firstPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=BIT},
+      </if>
+      <if test="flagUrl != null">
+        #{flagUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="recommend != null">
+        #{recommend,jdbcType=BIT},
+      </if>
+      <if test="shareStatement != null">
+        #{shareStatement,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="umsId != null">
+        #{umsId,jdbcType=BIGINT},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.blog.mbg.model.BgmsBlogExample" resultType="java.lang.Long">
+    select count(*) from bgms_blog
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update bgms_blog
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.appreciation != null">
+        appreciation = #{record.appreciation,jdbcType=BIT},
+      </if>
+      <if test="record.commentabled != null">
+        commentabled = #{record.commentabled,jdbcType=BIT},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstPicture != null">
+        first_picture = #{record.firstPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=BIT},
+      </if>
+      <if test="record.flagUrl != null">
+        flag_url = #{record.flagUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recommend != null">
+        recommend = #{record.recommend,jdbcType=BIT},
+      </if>
+      <if test="record.shareStatement != null">
+        share_statement = #{record.shareStatement,jdbcType=BIT},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.umsId != null">
+        ums_id = #{record.umsId,jdbcType=BIGINT},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update bgms_blog
+    set id = #{record.id,jdbcType=BIGINT},
+      appreciation = #{record.appreciation,jdbcType=BIT},
+      commentabled = #{record.commentabled,jdbcType=BIT},
+      title = #{record.title,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      first_picture = #{record.firstPicture,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      flag = #{record.flag,jdbcType=BIT},
+      flag_url = #{record.flagUrl,jdbcType=VARCHAR},
+      recommend = #{record.recommend,jdbcType=BIT},
+      share_statement = #{record.shareStatement,jdbcType=BIT},
+      state = #{record.state,jdbcType=INTEGER},
+      ums_id = #{record.umsId,jdbcType=BIGINT},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update bgms_blog
+    set id = #{record.id,jdbcType=BIGINT},
+      appreciation = #{record.appreciation,jdbcType=BIT},
+      commentabled = #{record.commentabled,jdbcType=BIT},
+      title = #{record.title,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      first_picture = #{record.firstPicture,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      flag = #{record.flag,jdbcType=BIT},
+      flag_url = #{record.flagUrl,jdbcType=VARCHAR},
+      recommend = #{record.recommend,jdbcType=BIT},
+      share_statement = #{record.shareStatement,jdbcType=BIT},
+      state = #{record.state,jdbcType=INTEGER},
+      ums_id = #{record.umsId,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.blog.mbg.model.BgmsBlog">
+    update bgms_blog
+    <set>
+      <if test="appreciation != null">
+        appreciation = #{appreciation,jdbcType=BIT},
+      </if>
+      <if test="commentabled != null">
+        commentabled = #{commentabled,jdbcType=BIT},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="firstPicture != null">
+        first_picture = #{firstPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=BIT},
+      </if>
+      <if test="flagUrl != null">
+        flag_url = #{flagUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="recommend != null">
+        recommend = #{recommend,jdbcType=BIT},
+      </if>
+      <if test="shareStatement != null">
+        share_statement = #{shareStatement,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="umsId != null">
+        ums_id = #{umsId,jdbcType=BIGINT},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.blog.mbg.model.BgmsBlog">
+    update bgms_blog
+    set appreciation = #{appreciation,jdbcType=BIT},
+      commentabled = #{commentabled,jdbcType=BIT},
+      title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      first_picture = #{firstPicture,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      flag = #{flag,jdbcType=BIT},
+      flag_url = #{flagUrl,jdbcType=VARCHAR},
+      recommend = #{recommend,jdbcType=BIT},
+      share_statement = #{shareStatement,jdbcType=BIT},
+      state = #{state,jdbcType=INTEGER},
+      ums_id = #{umsId,jdbcType=BIGINT},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.blog.mbg.model.BgmsBlog">
+    update bgms_blog
+    set appreciation = #{appreciation,jdbcType=BIT},
+      commentabled = #{commentabled,jdbcType=BIT},
+      title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      first_picture = #{firstPicture,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      flag = #{flag,jdbcType=BIT},
+      flag_url = #{flagUrl,jdbcType=VARCHAR},
+      recommend = #{recommend,jdbcType=BIT},
+      share_statement = #{shareStatement,jdbcType=BIT},
+      state = #{state,jdbcType=INTEGER},
+      ums_id = #{umsId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
