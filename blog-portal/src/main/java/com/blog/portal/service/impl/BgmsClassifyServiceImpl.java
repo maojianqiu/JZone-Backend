@@ -59,7 +59,7 @@ public class BgmsClassifyServiceImpl implements BgmsClassifyService {
     }
 
     @Override
-    public List<BgmsClassify> classifylist(String keyword, Integer pageSize, Integer pageNum) {
+    public List<BgmsClassify> classifylist(Long id,String keyword, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
         BgmsClassifyExample bgmsClassifyExample = new BgmsClassifyExample();
         BgmsClassifyExample.Criteria criteria = bgmsClassifyExample.createCriteria();
@@ -67,6 +67,7 @@ public class BgmsClassifyServiceImpl implements BgmsClassifyService {
             criteria.andNameLike("%" + keyword + "%");
         }
 
+        criteria.andUmsIdEqualTo(id);
         return bgmsClassifyMapper.selectByExample(bgmsClassifyExample);
     }
 

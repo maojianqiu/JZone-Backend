@@ -20,7 +20,7 @@ public interface BgmsClassifyService {
     /*
      * 获取分类列表
      * */
-    public List<BgmsClassify> classifylist(String keyword, Integer pageSize, Integer pageNum);
+    public List<BgmsClassify> classifylist(Long id,String keyword, Integer pageSize, Integer pageNum);
 
     /*
      * 获取一篇博文分类列表
