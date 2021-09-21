@@ -30,7 +30,7 @@ import java.util.List;
  */
 
 @Controller
-@Api(tags = "BgmsBlogController",description = "博文管理")
+@Api(tags = "BgmsBlogController",description = "博主的博文管理")
 @RequestMapping("/bmsblog")
 public class BgmsBlogController {
 
@@ -93,7 +93,7 @@ public class BgmsBlogController {
 
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
-        if(memberDetails.getId() == bgmsBlogParam.getUmsId()){
+        if(memberDetails.getId() != bgmsBlogParam.getUmsId()){
             return CommonResult.forbidden(null);
         }
 
@@ -111,8 +111,22 @@ public class BgmsBlogController {
     @ApiOperation(value = "获取博文详情")
     @RequestMapping(value = "/bloginfo/{blogId}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<BgmsBlogParam> bloginfo(@PathVariable Long blogId){
+    public CommonResult<BgmsBlogParam> bloginfo(
+            Principal principal,
+            @PathVariable Long blogId){
+        if(principal==null){
+            return CommonResult.unauthorized(null);
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+        MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
+
         BgmsBlog bgmsBlog = bgmsBlogService.bloginfo(blogId);
+
+        //如果当前登录人不是当前访问的博文的拥有者
+        if(bgmsBlog.getUmsId() != memberDetails.getId()){
+            CommonResult.forbidden("没有权限访问");
+        }
+
         BgmsBlogParam bgmsBlogParam = new BgmsBlogParam();
         BeanUtils.copyProperties(bgmsBlog , bgmsBlogParam);
 

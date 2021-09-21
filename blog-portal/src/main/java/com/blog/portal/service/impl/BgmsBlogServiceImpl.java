@@ -77,8 +77,11 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         if (!StringUtils.isEmpty(keyword)) {
             criteria.andTitleLike("%" + keyword + "%");
         }
-        //获取当前登陆账号的所有博文
-        criteria.andUmsIdEqualTo(userId);
+        //如果没有userID说明是查询全部的博文列表
+        if(userId != null){
+            //获取当前登陆账号的所有博文
+            criteria.andUmsIdEqualTo(userId);
+        }
         //获取除已删除外所有的博文
         criteria.andStateNotEqualTo(4);
         List<BgmsBlog> lists = bgmsBlogMapper.selectByExample(example);

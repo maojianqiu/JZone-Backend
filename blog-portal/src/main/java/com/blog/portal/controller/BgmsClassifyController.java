@@ -66,7 +66,7 @@ public class BgmsClassifyController {
 
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
-        if(memberDetails.getId() == bgmsClassifyParam.getUmsId()){
+        if(memberDetails.getId() != bgmsClassifyParam.getUmsId()){
             return CommonResult.forbidden(null);
         }
 

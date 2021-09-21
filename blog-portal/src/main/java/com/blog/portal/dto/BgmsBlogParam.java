@@ -3,6 +3,7 @@ package com.blog.portal.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,12 @@ public class BgmsBlogParam {
 
     @ApiModelProperty(value = "摘要图片")
     private String firstPicture;
+
+    @ApiModelProperty(value = "创建日期")
+    private Date createTime;
+
+    @ApiModelProperty(value = "最后一次更新日期")
+    private Date updateTime;
 
     @ApiModelProperty(value = "原创还是转载 0-转载，1-原创")
     private Boolean flag;

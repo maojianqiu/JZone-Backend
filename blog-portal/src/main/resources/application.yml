@@ -30,7 +30,7 @@ secure:
       - /actuator/**
       - /sso/**
       - /home/**
-      - /
+      - /bmsblog/bloginfo/**
 
 
 # 自定义redis key
