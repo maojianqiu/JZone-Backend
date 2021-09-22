@@ -77,7 +77,6 @@ public class BlogSecurityConfig  extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
-                // 关闭跨站请求防护及不使用session
 
                 // 自定义权限拒绝处理类
                 .and()

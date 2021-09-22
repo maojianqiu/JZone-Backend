@@ -31,6 +31,7 @@ secure:
       - /sso/**
       - /home/**
       - /bmsblog/bloginfo/**
+      - /blogs/**
 
 
 # 自定义redis key
