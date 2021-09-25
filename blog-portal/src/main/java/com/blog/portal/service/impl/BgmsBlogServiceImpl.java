@@ -81,9 +81,13 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         if(userId != null){
             //获取当前登陆账号的所有博文
             criteria.andUmsIdEqualTo(userId);
+            //获取除已删除外所有的博文
+            criteria.andStateNotEqualTo(4);
+        }else {
+            //获取除已发布的所有的博文
+            criteria.andStateEqualTo(2);
         }
-        //获取除已删除外所有的博文
-        criteria.andStateNotEqualTo(4);
+
         List<BgmsBlog> lists = bgmsBlogMapper.selectByExample(example);
         return lists;
     }
