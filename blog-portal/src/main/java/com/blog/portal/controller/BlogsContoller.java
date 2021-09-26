@@ -48,9 +48,7 @@ public class BlogsContoller {
         注意，获取后，需要把隐私信息去掉，例如usmid
          */
 
-        BgmsBlog bgmsBlog = bgmsBlogService.bloginfo(blogId);
-        BgmsBlogParam bgmsBlogParam = new BgmsBlogParam();
-        BeanUtils.copyProperties(bgmsBlog , bgmsBlogParam);
+        BgmsBlogParam bgmsBlogParam = bgmsBlogService.bloginfo(blogId);
 
         List<BgmsTag> bgmsTags = bgmsTagService.taglistByBlogId(blogId);
         List<BgmsTagParam> bgmsTagParamList = new ArrayList<>();
@@ -61,7 +59,7 @@ public class BlogsContoller {
         }
         bgmsBlogParam.setTags(bgmsTagParamList);
 
-        if(bgmsBlog != null){
+        if(bgmsBlogParam != null){
             return CommonResult.success(bgmsBlogParam);
         }else {
             return CommonResult.failed();

@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.blog.portal.dao.BgmsBlogTagClassifyDao">
+
+    <resultMap id="BaseResultMap" type="com.blog.portal.dto.BgmsBlogParam">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="appreciation" jdbcType="BIT" property="appreciation" />
+        <result column="commentabled" jdbcType="BIT" property="commentabled" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="first_picture" jdbcType="VARCHAR" property="firstPicture" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="flag" jdbcType="BIT" property="flag" />
+        <result column="flag_url" jdbcType="VARCHAR" property="flagUrl" />
+        <result column="recommend" jdbcType="BIT" property="recommend" />
+        <result column="share_statement" jdbcType="BIT" property="shareStatement" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="ums_id" jdbcType="BIGINT" property="umsId" />
+        <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.portal.dto.BgmsBlogParam">
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, appreciation, commentabled, title, description, first_picture, create_time, update_time,
+        flag, flag_url, recommend, share_statement, state, ums_id
+      </sql>
+    <sql id="Blob_Column_List">
+        content
+      </sql>
+
     <!--批量新增回写主键支持-->
     <insert id="insertClassifyList">
         INSERT INTO bgms_blog_classify_relation (blog_id, classify_id) VALUES
@@ -9,5 +39,15 @@
             #{item.classifyId,jdbcType=BIGINT})
         </foreach>
     </insert>
+
+    <select id="selectBlogInfoByBlogID" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        bb.id, bb.appreciation, bb.commentabled, bb.title, bb.description, bb.first_picture,  bb.update_time,
+        bb.flag, bb.flag_url, bb.recommend, bb.share_statement, bb.ums_id
+        ,um.nickname,bb.content
+        from bgms_blog bb
+        join `ums_member` um on bb.ums_id = um.id
+        where bb.id = #{id,jdbcType=BIGINT}
+    </select>
 
 </mapper>

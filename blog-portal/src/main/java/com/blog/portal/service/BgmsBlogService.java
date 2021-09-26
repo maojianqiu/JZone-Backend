@@ -19,7 +19,7 @@ public interface BgmsBlogService {
     /*
      * 获取博文详情
      * */
-    public BgmsBlog bloginfo(Long blogId);
+    public BgmsBlogParam bloginfo(Long blogId);
 
     /*
      * 获取博文列表

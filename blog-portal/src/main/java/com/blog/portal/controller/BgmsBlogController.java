@@ -120,15 +120,12 @@ public class BgmsBlogController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
 
-        BgmsBlog bgmsBlog = bgmsBlogService.bloginfo(blogId);
+        BgmsBlogParam bgmsBlogParam = bgmsBlogService.bloginfo(blogId);
 
         //如果当前登录人不是当前访问的博文的拥有者
-        if(bgmsBlog.getUmsId() != memberDetails.getId()){
+        if(bgmsBlogParam.getUmsId() != memberDetails.getId()){
             CommonResult.forbidden("没有权限访问");
         }
-
-        BgmsBlogParam bgmsBlogParam = new BgmsBlogParam();
-        BeanUtils.copyProperties(bgmsBlog , bgmsBlogParam);
 
         List<BgmsTag> bgmsTags = bgmsTagService.taglistByBlogId(blogId);
         List<BgmsTagParam> bgmsTagParamList = new ArrayList<>();
@@ -139,7 +136,7 @@ public class BgmsBlogController {
         }
         bgmsBlogParam.setTags(bgmsTagParamList);
 
-        if(bgmsBlog != null){
+        if(bgmsBlogParam != null){
             return CommonResult.success(bgmsBlogParam);
         }else {
             return CommonResult.failed();

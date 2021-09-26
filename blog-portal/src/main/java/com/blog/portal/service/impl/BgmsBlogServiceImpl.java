@@ -4,6 +4,7 @@ import com.blog.mbg.mapper.BgmsBlogMapper;
 import com.blog.mbg.model.BgmsBlog;
 import com.blog.mbg.model.BgmsBlogExample;
 import com.blog.mbg.model.BgmsTagExample;
+import com.blog.portal.dao.BgmsBlogTagClassifyDao;
 import com.blog.portal.dto.BgmsBlogParam;
 import com.blog.portal.service.BgmsBlogService;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +27,8 @@ import java.util.List;
 public class BgmsBlogServiceImpl implements BgmsBlogService {
     @Autowired
     BgmsBlogMapper bgmsBlogMapper;
+    @Autowired
+    BgmsBlogTagClassifyDao bgmsBlogTagClassifyDao;
 
     @Override
     public Long blogAdd(BgmsBlogParam bgmsClassifyParam) {
@@ -60,8 +63,8 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     }
 
     @Override
-    public BgmsBlog bloginfo(Long blogId) {
-        BgmsBlog bgmsBlog = bgmsBlogMapper.selectByPrimaryKey(blogId);
+    public BgmsBlogParam bloginfo(Long blogId) {
+        BgmsBlogParam bgmsBlog = bgmsBlogTagClassifyDao.selectBlogInfoByBlogID(blogId);
         if(bgmsBlog != null){
             return bgmsBlog;
         }

@@ -57,6 +57,9 @@ public class BgmsBlogParam {
     @ApiModelProperty(value = "博文作者ID")
     private Long umsId;
 
+    @ApiModelProperty(value = "博文作者昵称")
+    private String nickname;
+
     @ApiModelProperty(value = "博文内容")
     private String content;
 
