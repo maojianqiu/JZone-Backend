@@ -78,7 +78,7 @@ public class BlogsContoller {
         /*
         注意，获取后，需要把隐私信息去掉，例如usmid，即只传自己需要的数据
          */
-        List<BgmsBlog> lists = bgmsBlogService.bloglist(null,keyword, pageSize, pageNum);
+        List<BgmsBlog> lists = bgmsBlogService.bloglist(null,100,keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
 }

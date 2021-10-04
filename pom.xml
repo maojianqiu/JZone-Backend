@@ -6,6 +6,7 @@
         <module>blog-security</module>
         <module>blog-admin</module>
         <module>blog-portal</module>
+        <module>blog-search</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -32,7 +32,7 @@ public class BgmsClassifyController {
     BgmsClassifyService bgmsClassifyService;
 
     
-    @ApiOperation(value = "新增分类")
+    @ApiOperation(value = "新增登录用户分类")
     @RequestMapping(value = "/classifyadd", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult classifyAdd(Principal principal,
@@ -55,7 +55,7 @@ public class BgmsClassifyController {
         }
     }
 
-    @ApiOperation(value = "修改分类")
+    @ApiOperation(value = "修改登录用户分类")
     @RequestMapping(value = "/classifyupdate", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult classifyUpdate(Principal principal,
@@ -69,6 +69,10 @@ public class BgmsClassifyController {
         if(memberDetails.getId() != bgmsClassifyParam.getUmsId()){
             return CommonResult.forbidden(null);
         }
+
+        /**
+         * 此处应该对比，按照 clasid 、umsid ,去搜索class 如果有就修改或删除，如果没有就返回失败；
+         */
 
         int count = bgmsClassifyService.classifyUpdate(bgmsClassifyParam);
         if (count > 0) {
@@ -86,7 +90,7 @@ public class BgmsClassifyController {
 //        return null;
 //    }
 
-    @ApiOperation(value = "获取分类列表")
+    @ApiOperation(value = "获取登录用户分类列表")
     @RequestMapping(value = "/classifylist", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<BgmsClassify>> classifylist(
@@ -105,16 +109,9 @@ public class BgmsClassifyController {
         return CommonResult.success(CommonPage.restPage(classifylist));
     }
 
-    @ApiOperation(value = "获取一篇博文分类列表")
-    @RequestMapping(value = "/classifyInfo/{blogId}", method = RequestMethod.GET)
-    @ResponseBody
-    public CommonResult<List> getClassifyInfo(@PathVariable Long blogId){
-        //获取当前登录对象的id，判断当前博文是否是当前对象的;
 
-        return CommonResult.success(bgmsClassifyService.classifylistByBlogId(blogId));
-    }
 
-    @ApiOperation(value = "批量删除分类")
+    @ApiOperation(value = "批量删除登录用户分类")
     @RequestMapping(value = "/classifydel", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult classifydel(Principal principal,
@@ -123,11 +120,39 @@ public class BgmsClassifyController {
             return CommonResult.unauthorized(null);
         }
 
+        /**
+         * 此处应该对比，按照 clasid 、umsid ,去搜索class 如果有就修改或删除，如果没有就返回失败；
+         */
+
         int count = bgmsClassifyService.classifydel(ids);
         if (count > 0) {
             return CommonResult.success(count);
         } else {
             return CommonResult.failed();
         }
+    }
+
+
+    @ApiOperation(value = "获取指定用户分类列表")
+    @RequestMapping(value = "/viewClassifyList", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<BgmsClassify>> viewClassifyList(
+            Long userId,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
+        //获取当前登录对象的id，判断当前博文是否是当前对象的;
+
+        List<BgmsClassify> classifylist = bgmsClassifyService.classifylist(userId,keyword, pageSize, pageNum);
+        return CommonResult.success(CommonPage.restPage(classifylist));
+    }
+
+    @ApiOperation(value = "controller 获取一篇博文分类列表")
+    @RequestMapping(value = "/classifyInfo/{blogId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List> getClassifyInfo(@PathVariable Long blogId){
+        //获取当前登录对象的id，判断当前博文是否是当前对象的;
+
+        return CommonResult.success(bgmsClassifyService.classifylistByBlogId(blogId));
     }
 }

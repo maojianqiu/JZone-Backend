@@ -24,7 +24,7 @@ public interface BgmsBlogService {
     /*
      * 获取博文列表
      * */
-    public List<BgmsBlog> bloglist(Long userId,String keyword, Integer pageSize, Integer pageNum);
+    public List<BgmsBlog> bloglist(Long userId,Integer state,String keyword, Integer pageSize, Integer pageNum);
 
     /*
      * 批量删除博文;

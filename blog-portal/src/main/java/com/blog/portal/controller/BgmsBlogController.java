@@ -42,7 +42,7 @@ public class BgmsBlogController {
     BgmsTagService bgmsTagService;
 
 
-    @ApiOperation(value = "新增博文")
+    @ApiOperation(value = "新增登录用户博文")
     @RequestMapping(value = "/blogadd", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult blogAdd(Principal principal,
@@ -75,7 +75,7 @@ public class BgmsBlogController {
         }
     }
 
-    @ApiOperation(value = "修改博文")
+    @ApiOperation(value = "修改登录用户博文")
     @RequestMapping(value = "/blogupdate", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult blogUpdate(Principal principal,
@@ -97,6 +97,10 @@ public class BgmsBlogController {
             return CommonResult.forbidden(null);
         }
 
+        /**
+         * 此处应该对比，按照 blogid 、umsid ,去搜索blog 如果有就修改或删除，如果没有就返回失败；
+         */
+
         int blogid = bgmsBlogService.blogUpdate(bgmsBlogParam);
         bgmsTagService.tagUpdate(bgmsBlogParam.getId() , bgmsBlogParam.getTags());
         bgmsClassifyService.classifyBlogRelationUpdate( 1 , bgmsBlogParam.getId(),bgmsBlogParam.getClassifies());
@@ -108,7 +112,7 @@ public class BgmsBlogController {
         }
     }
 
-    @ApiOperation(value = "获取博文详情")
+    @ApiOperation(value = "获取登录用户博文详情")
     @RequestMapping(value = "/bloginfo/{blogId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<BgmsBlogParam> bloginfo(
@@ -144,11 +148,12 @@ public class BgmsBlogController {
 
     }
 
-    @ApiOperation(value = "获取博文列表")
+    @ApiOperation(value = "获取登录用户博文列表")
     @RequestMapping(value = "/bloglist", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<BgmsBlog>> bloglist(
             Principal principal,
+            Integer state,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
@@ -156,15 +161,15 @@ public class BgmsBlogController {
         if(principal==null){
             return CommonResult.unauthorized(null);
         }
-
+        System.out.println(state);
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
 
-        List<BgmsBlog> lists = bgmsBlogService.bloglist(memberDetails.getId(),keyword, pageSize, pageNum);
+        List<BgmsBlog> lists = bgmsBlogService.bloglist(memberDetails.getId(),state,keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
 
-    @ApiOperation(value = "删除单个博文")
+    @ApiOperation(value = "删除登录用户单个博文")
     @RequestMapping(value = "/blogdel", method = RequestMethod.POST)
     @ResponseBody
     //@RequestParam：将请求参数绑定到你控制器的方法参数上（是springmvc中接收普通参数的注解）
@@ -179,6 +184,10 @@ public class BgmsBlogController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
 
+        /**
+         * 此处应该对比，按照 blogid 、umsid ,去搜索blog 如果有就修改或删除，如果没有就返回失败；
+         */
+
         int count = bgmsBlogService.blogdel(memberDetails.getId() , id);
 
         //说明当前博文和登陆人不一致，没有权限
@@ -187,4 +196,6 @@ public class BgmsBlogController {
         }
         return CommonResult.success("已删除");
     }
+
+
 }
