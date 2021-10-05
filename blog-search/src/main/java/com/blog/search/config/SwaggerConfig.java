@@ -1,7 +1,7 @@
 package com.blog.search.config;
 
-import com.learn.config.BaseSwaggerConfig;
-import com.learn.domain.SwaggerProperties;
+import com.blog.common.config.BaseSwaggerConfig;
+import com.blog.common.domain.SwaggerProperties;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
