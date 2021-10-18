@@ -45,7 +45,9 @@ public class BlogsContoller {
     @ResponseBody
     public CommonResult<BgmsBlogParam> bloginfo(@PathVariable Long blogId){
         /*
-        注意，获取后，需要把隐私信息去掉，例如usmid
+        注意，获取后，需要把隐私信息去掉，例如usmid，
+        若 blog 不是当前登录账号的，并且不是已发布状态，需要返回 404，
+        若是当前账号的，直接正常显示
          */
 
         BgmsBlogParam bgmsBlogParam = bgmsBlogService.bloginfo(blogId);

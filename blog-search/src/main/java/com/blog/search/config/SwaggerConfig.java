@@ -16,10 +16,10 @@ public class SwaggerConfig extends BaseSwaggerConfig {
     @Override
     public SwaggerProperties swaggerProperties() {
         return SwaggerProperties.builder()
-                .apiBasePackage("com.learn.demo.controller")
-                .title("mall搜索系统")
-                .description("mall搜索相关接口文档")
-                .contactName("macro")
+                .apiBasePackage("com.blog.search")
+                .title("blog搜索系统")
+                .description("blog搜索相关接口文档")
+                .contactName("vae")
                 .version("1.0")
                 .enableSecurity(false)
                 .build();

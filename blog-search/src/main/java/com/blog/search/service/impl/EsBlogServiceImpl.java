@@ -1,9 +1,15 @@
 package com.blog.search.service.impl;
 
+import com.blog.search.dao.EsBlogDao;
 import com.blog.search.domain.EsBlog;
+import com.blog.search.repository.EsBlogRepository;
 import com.blog.search.service.EsBlogService;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,9 +21,16 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * 搜索博文管理Service实现类
@@ -31,49 +44,104 @@ import java.util.stream.Collectors;
 public class EsBlogServiceImpl implements EsBlogService {
 
     @Autowired
+    private EsBlogDao esBlogDao;
+    @Autowired
+    private EsBlogRepository esBlogRepository;
+
+    @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
-
-
+    
     @Override
     public int importAll() {
-        return 0;
+
+        List<EsBlog> esBlogList = esBlogDao.getAllEsBlogList(null);
+//        for (EsBlog e:
+//             esBlogList) {
+//            System.out.println(e.toString());
+//        }
+//        return 0;
+
+        Iterable<EsBlog> esBlogIterable = esBlogRepository.saveAll(esBlogList);
+        Iterator<EsBlog> iterator = esBlogIterable.iterator();
+        int result = 0;
+        while (iterator.hasNext()) {
+            result++;
+            iterator.next();
+        }
+        return result;
     }
 
     @Override
     public void delete(Long id) {
-
+        esBlogRepository.deleteById(id);
     }
 
     @Override
     public EsBlog create(Long id) {
-        return null;
+        EsBlog result = null;
+        List<EsBlog> esBlogList = esBlogDao.getAllEsBlogList(id);
+        if (esBlogList.size() > 0) {
+            EsBlog esProduct = esBlogList.get(0);
+            result = esBlogRepository.save(esProduct);
+        }
+        return result;
     }
 
     @Override
     public void delete(List<Long> ids) {
-
+        if (!CollectionUtils.isEmpty(ids)) {
+            List<EsBlog> esBlogList = new ArrayList<>();
+            for (Long id : ids) {
+                EsBlog esBlog = new EsBlog();
+                esBlog.setId(id);
+                esBlogList.add(esBlog);
+            }
+            esBlogRepository.deleteAll(esBlogList);
+        }
     }
+
 
     @Override
     public Page<EsBlog> search(String keyword, Integer pageNum, Integer pageSize) {
-        return null;
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return esBlogRepository.findByTitleOrDescriptionOrContent(keyword, keyword, keyword, pageable);
     }
 
     @Override
-    public Page<EsBlog> search(String keyword, Long title, Long description , Long content, Integer pageNum, Integer pageSize, Integer sort) {
-        String preTag = "<font color='#dd4b39'>";//google的色值
-        String postTag = "</font>";
-        HighlightBuilder highlightBuilder = new HighlightBuilder().field("title").preTags(preTag).postTags(postTag);
+    public Page<EsBlog> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize, Integer sort) {
+
         Pageable pageable = PageRequest.of(pageNum, pageSize);
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+        //分页
+        nativeSearchQueryBuilder.withPageable(pageable);
 
-        MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("title", title);
 
-        // Query对象 建造者模式 其中的分页和排序同样看代码可知。
-        NativeSearchQuery query = new NativeSearchQueryBuilder().withQuery(matchQueryBuilder).withFields("name", "desc").withPageable(pageable)
-                .withHighlightBuilder(highlightBuilder).build();
+        //搜索
+        if (StringUtils.isEmpty(keyword)) {
+            nativeSearchQueryBuilder.withQuery(QueryBuilders.matchAllQuery());
+        } else {
+            List<FunctionScoreQueryBuilder.FilterFunctionBuilder> filterFunctionBuilders = new ArrayList<>();
 
-        SearchHits<EsBlog> searchHits = elasticsearchRestTemplate.search(query, EsBlog.class);
+            //matchQuery("filedname","value")匹配单个字段，匹配字段名为filedname,值为value的文档
+            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("title", keyword),
+                    ScoreFunctionBuilders.weightFactorFunction(10)));
+//            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("description", keyword),
+//                    ScoreFunctionBuilders.weightFactorFunction(5)));
+//            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("content", keyword),
+//                    ScoreFunctionBuilders.weightFactorFunction(2)));
+            FunctionScoreQueryBuilder.FilterFunctionBuilder[] builders = new FunctionScoreQueryBuilder.FilterFunctionBuilder[filterFunctionBuilders.size()];
+            filterFunctionBuilders.toArray(builders);
+            FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(builders)
+                    .scoreMode(FunctionScoreQuery.ScoreMode.SUM)
+                    .setMinScore(2);
+            nativeSearchQueryBuilder.withQuery(functionScoreQueryBuilder);
+        }
 
+        nativeSearchQueryBuilder.withSort(SortBuilders.scoreSort().order(SortOrder.DESC));
+        NativeSearchQuery searchQuery = nativeSearchQueryBuilder.build();
+//        LOGGER.log(Level.parse("DSL:{}"), searchQuery.getQuery().toString());
+//        System.out.println("DSL:"+searchQuery.getQuery().toString());
+        SearchHits<EsBlog> searchHits = elasticsearchRestTemplate.search(searchQuery, EsBlog.class);
         if(searchHits.getTotalHits()<=0){
             return new PageImpl<>(null,pageable,0);
         }
