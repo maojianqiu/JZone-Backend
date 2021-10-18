@@ -5,9 +5,11 @@ import com.blog.search.domain.EsBlog;
 import com.blog.search.repository.EsBlogRepository;
 import com.blog.search.service.EsBlogService;
 import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,40 +110,39 @@ public class EsBlogServiceImpl implements EsBlogService {
     }
 
     @Override
-    public Page<EsBlog> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize, Integer sort) {
+    public Page<EsBlog> search(String keyword,  String title, String description, Integer pageNum, Integer pageSize, Integer sort) {
 
+        String preTag = "<font color='#dd4b39'>";//google的色值
+        String postTag = "</font>";
+        HighlightBuilder highlightBuilder = new HighlightBuilder().field("title").field("description").preTags("<span style='color:red'>").postTags("</span>");
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-        //分页
-        nativeSearchQueryBuilder.withPageable(pageable);
 
+        NativeSearchQuery query = null;
 
         //搜索
         if (StringUtils.isEmpty(keyword)) {
-            nativeSearchQueryBuilder.withQuery(QueryBuilders.matchAllQuery());
+            query = new NativeSearchQueryBuilder()
+                    .withQuery(QueryBuilders.matchAllQuery())
+                    .withHighlightBuilder(highlightBuilder)
+                    .withPageable(pageable)
+                    .build();
         } else {
-            List<FunctionScoreQueryBuilder.FilterFunctionBuilder> filterFunctionBuilders = new ArrayList<>();
 
-            //matchQuery("filedname","value")匹配单个字段，匹配字段名为filedname,值为value的文档
-            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("title", keyword),
-                    ScoreFunctionBuilders.weightFactorFunction(10)));
-//            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("description", keyword),
-//                    ScoreFunctionBuilders.weightFactorFunction(5)));
-//            filterFunctionBuilders.add(new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.matchQuery("content", keyword),
-//                    ScoreFunctionBuilders.weightFactorFunction(2)));
-            FunctionScoreQueryBuilder.FilterFunctionBuilder[] builders = new FunctionScoreQueryBuilder.FilterFunctionBuilder[filterFunctionBuilders.size()];
-            filterFunctionBuilders.toArray(builders);
-            FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(builders)
-                    .scoreMode(FunctionScoreQuery.ScoreMode.SUM)
-                    .setMinScore(2);
-            nativeSearchQueryBuilder.withQuery(functionScoreQueryBuilder);
+            MatchQueryBuilder titlematchQueryBuilder = new MatchQueryBuilder("title", keyword).boost(6.0f);
+            MatchQueryBuilder descriptionmatchQueryBuilder = new MatchQueryBuilder("description", keyword).boost(1.0f);
+            // Query对象 建造者模式 其中的分页和排序同样看代码可知。
+            query = new NativeSearchQueryBuilder()
+                    .withQuery(titlematchQueryBuilder)
+                    .withQuery(descriptionmatchQueryBuilder)
+//                    .withFields("name", "desc")
+                    .withHighlightBuilder(highlightBuilder)
+                    .withPageable(pageable)
+//                    .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+//                    .withSort(SortBuilders.fieldSort("updateTime").order(SortOrder.DESC))
+                    .build();
         }
 
-        nativeSearchQueryBuilder.withSort(SortBuilders.scoreSort().order(SortOrder.DESC));
-        NativeSearchQuery searchQuery = nativeSearchQueryBuilder.build();
-//        LOGGER.log(Level.parse("DSL:{}"), searchQuery.getQuery().toString());
-//        System.out.println("DSL:"+searchQuery.getQuery().toString());
-        SearchHits<EsBlog> searchHits = elasticsearchRestTemplate.search(searchQuery, EsBlog.class);
+        SearchHits<EsBlog> searchHits = elasticsearchRestTemplate.search(query, EsBlog.class);
         if(searchHits.getTotalHits()<=0){
             return new PageImpl<>(null,pageable,0);
         }

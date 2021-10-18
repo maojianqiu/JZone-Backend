@@ -39,6 +39,7 @@ public class EsBlog implements Serializable {
     private Date createTime;
 
     @ApiModelProperty(value = "最后一次更新日期")
+    @Field(type = FieldType.Keyword)
     private Date updateTime;
 
     @ApiModelProperty(value = "原创还是转载 0-转载，1-原创")

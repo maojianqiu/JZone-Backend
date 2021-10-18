@@ -38,7 +38,7 @@ public interface EsBlogService {
     /**
      * 根据关键字搜索名称或者副标题复合查询
      */
-    Page<EsBlog> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize,Integer sort);
+    Page<EsBlog> search(String keyword, String title, String der, Integer pageNum, Integer pageSize,Integer sort);
 
     /**
      * 根据博文id推荐相关博文
