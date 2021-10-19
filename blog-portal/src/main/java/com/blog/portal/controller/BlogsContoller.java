@@ -78,7 +78,7 @@ public class BlogsContoller {
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
         /*
-        注意，获取后，需要把隐私信息去掉，例如usmid，即只传自己需要的数据
+        注意，获取后，需要把隐私信息去掉，，即只传自己需要的数据
          */
         List<BgmsBlog> lists = bgmsBlogService.bloglist(null,100,keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));

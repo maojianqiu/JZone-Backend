@@ -93,11 +93,11 @@ public class EsBlogController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<EsBlog>> search(@RequestParam(required = false) String keyword,
-                                                      @RequestParam(required = false) String title,
-                                                      @RequestParam(required = false) String der,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer pageNum,
-                                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer sort) {
+                                                   @RequestParam(required = false) String title,
+                                                   @RequestParam(required = false) String der,
+                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                                                   @RequestParam(required = false, defaultValue = "5") Integer pageSize,
+                                                   @RequestParam(required = false, defaultValue = "0") Integer sort) {
         Page<EsBlog> esProductPage = esBlogService.search(keyword, title, der, pageNum, pageSize, sort);
         return CommonResult.success(CommonPage.restPage(esProductPage));
     }

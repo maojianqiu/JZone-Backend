@@ -1,5 +1,8 @@
 package com.blog.search.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.blog.search.dao.EsBlogDao;
 import com.blog.search.domain.EsBlog;
 import com.blog.search.repository.EsBlogRepository;
@@ -10,6 +13,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +118,11 @@ public class EsBlogServiceImpl implements EsBlogService {
 
         String preTag = "<font color='#dd4b39'>";//google的色值
         String postTag = "</font>";
-        HighlightBuilder highlightBuilder = new HighlightBuilder().field("title").field("description").preTags("<span style='color:red'>").postTags("</span>");
+        HighlightBuilder.Field titlehighlightBuilder = new HighlightBuilder.Field("title").preTags("<span style='color:red'>").postTags("</span>").requireFieldMatch(false);
+        HighlightBuilder.Field descriptionhighlightBuilder = new HighlightBuilder.Field("description").preTags("<span style='color:red'>").postTags("</span>").requireFieldMatch(false);
+        HighlightBuilder.Field[] ary = new HighlightBuilder.Field[2];
+        ary[0] = titlehighlightBuilder;
+        ary[1] = descriptionhighlightBuilder;
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
         NativeSearchQuery query = null;
@@ -123,8 +131,10 @@ public class EsBlogServiceImpl implements EsBlogService {
         if (StringUtils.isEmpty(keyword)) {
             query = new NativeSearchQueryBuilder()
                     .withQuery(QueryBuilders.matchAllQuery())
-                    .withHighlightBuilder(highlightBuilder)
+                    .withHighlightFields(ary)
                     .withPageable(pageable)
+                    .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                    .withSort(SortBuilders.fieldSort("updateTime").order(SortOrder.DESC))
                     .build();
         } else {
 
@@ -135,10 +145,10 @@ public class EsBlogServiceImpl implements EsBlogService {
                     .withQuery(titlematchQueryBuilder)
                     .withQuery(descriptionmatchQueryBuilder)
 //                    .withFields("name", "desc")
-                    .withHighlightBuilder(highlightBuilder)
+                    .withHighlightFields(ary)
                     .withPageable(pageable)
-//                    .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-//                    .withSort(SortBuilders.fieldSort("updateTime").order(SortOrder.DESC))
+                    .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                    .withSort(SortBuilders.fieldSort("updateTime").order(SortOrder.DESC))
                     .build();
         }
 
@@ -147,6 +157,14 @@ public class EsBlogServiceImpl implements EsBlogService {
             return new PageImpl<>(null,pageable,0);
         }
         List<EsBlog> searchProductList = searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+
+        int i = 0;
+        for (SearchHit s : searchHits) {
+            searchProductList.get(i).setTitle(String.join("", s.getHighlightField("title")));
+            searchProductList.get(i).setDescription(String.join("", s.getHighlightField("description")));
+            i++;
+        }
+
         return new PageImpl<>(searchProductList,pageable,searchHits.getTotalHits());
     }
 
