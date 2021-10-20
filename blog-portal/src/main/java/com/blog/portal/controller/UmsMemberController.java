@@ -73,9 +73,9 @@ public class UmsMemberController {
 
 
     @ApiOperation("对外获取会员信息")
-    @RequestMapping(value = "/getMemeberInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/getMemeberInfo/{userId}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getMemeberInfo(Long userId) {
+    public CommonResult getMemeberInfo(@PathVariable Long userId) {
         if(userId == null){
             return CommonResult.failed();
         }
