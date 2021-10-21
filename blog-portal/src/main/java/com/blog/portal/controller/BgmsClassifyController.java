@@ -134,10 +134,10 @@ public class BgmsClassifyController {
 
 
     @ApiOperation(value = "获取指定用户分类列表")
-    @RequestMapping(value = "/viewClassifyList", method = RequestMethod.GET)
+    @RequestMapping(value = "/viewClassifyList/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<BgmsClassify>> viewClassifyList(
-            Long userId,
+            @PathVariable Long userId,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
@@ -147,7 +147,7 @@ public class BgmsClassifyController {
         return CommonResult.success(CommonPage.restPage(classifylist));
     }
 
-    @ApiOperation(value = "controller 获取一篇博文分类列表")
+    @ApiOperation(value = "blogdetail.vue 获取一篇博文分类列表")
     @RequestMapping(value = "/classifyInfo/{blogId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List> getClassifyInfo(@PathVariable Long blogId){

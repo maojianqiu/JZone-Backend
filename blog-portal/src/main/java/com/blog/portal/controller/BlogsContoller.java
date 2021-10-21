@@ -98,4 +98,19 @@ public class BlogsContoller {
         List<BgmsBlog> lists = bgmsBlogService.bloglist(id,2,keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
+
+    @ApiOperation(value = "通过userID获取博文列表：博客主页")
+    @RequestMapping(value = "/blogViewListByClassyID/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<BgmsBlog>> blogViewListByClassyID(
+            @PathVariable Long id,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
+        /*
+        注意，获取后，需要把隐私信息去掉，，即只传自己需要的数据
+         */
+        List<BgmsBlog> lists = bgmsBlogService.bloglist(id,2,keyword, pageSize, pageNum);
+        return CommonResult.success(CommonPage.restPage(lists));
+    }
 }
