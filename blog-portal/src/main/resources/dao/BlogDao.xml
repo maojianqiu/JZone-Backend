@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.blog.search.dao.EsBlogDao">
-    <resultMap id="esBlogListMap" type="com.blog.search.domain.EsBlog" autoMapping="true">
+<mapper namespace="com.blog.portal.dao.BlogDao">
+    <resultMap id="BlogListMap" type="com.blog.portal.dto.BgmsBlogParam" autoMapping="true">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <collection property="tags" columnPrefix="tag_"
-                    ofType="com.blog.search.domain.EsBlogTag">
+                    ofType="com.blog.portal.dto.BgmsTagParam">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="blog_id" property="blogId" jdbcType="BIGINT"/>
             <result column="name" property="name"/>
         </collection>
     </resultMap>
-    <select id="getAllEsBlogList" resultMap="esBlogListMap">
+    <select id="getAllBlogList" resultMap="BlogListMap">
         select
         b.id id,
         b.appreciation ,

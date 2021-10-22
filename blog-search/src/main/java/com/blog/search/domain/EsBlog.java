@@ -64,6 +64,9 @@ public class EsBlog implements Serializable {
     @Field(type = FieldType.Text,fielddata = true, searchAnalyzer = "ik_max_word", analyzer = "ik_max_word")
     private String nickname;
 
+    @ApiModelProperty(value = "博文作者头像")
+    private String icon;
+
     @ApiModelProperty(value = "博文内容")
     @Field(type = FieldType.Text,fielddata = true, searchAnalyzer = "ik_max_word", analyzer = "ik_max_word")
     private String content;

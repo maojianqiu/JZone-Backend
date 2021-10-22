@@ -21,13 +21,20 @@ public interface BgmsBlogService {
      * */
     public BgmsBlogParam bloginfo(Long blogId);
 
+
+    /*
+     * 批量删除博文;
+     * */
+    public int blogdel(Long umsId,Long id);
+
     /*
      * 获取博文列表
      * */
     public List<BgmsBlog> bloglist(Long userId,Integer state,String keyword, Integer pageSize, Integer pageNum);
 
     /*
-     * 批量删除博文;
+     * 获取博文列表
      * */
-    public int blogdel(Long umsId,Long id);
+    public List<BgmsBlogParam> viewbloglist(String keyword, Integer pageSize, Integer pageNum);
+
 }

@@ -32,6 +32,7 @@ secure:
       - /home/**
       - /bmsblog/bloginfo/**
       - /blogs/**
+      - /bmsclassify/viewClassifyList/**
 
 
 # 自定义redis key

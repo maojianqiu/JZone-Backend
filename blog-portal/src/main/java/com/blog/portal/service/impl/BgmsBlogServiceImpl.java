@@ -5,6 +5,7 @@ import com.blog.mbg.model.BgmsBlog;
 import com.blog.mbg.model.BgmsBlogExample;
 import com.blog.mbg.model.BgmsTagExample;
 import com.blog.portal.dao.BgmsBlogTagClassifyDao;
+import com.blog.portal.dao.BlogDao;
 import com.blog.portal.dto.BgmsBlogParam;
 import com.blog.portal.service.BgmsBlogService;
 import com.github.pagehelper.PageHelper;
@@ -29,6 +30,8 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     BgmsBlogMapper bgmsBlogMapper;
     @Autowired
     BgmsBlogTagClassifyDao bgmsBlogTagClassifyDao;
+    @Autowired
+    BlogDao blogDao;
 
     @Override
     public Long blogAdd(BgmsBlogParam bgmsClassifyParam) {
@@ -73,6 +76,26 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     }
 
     @Override
+    public int blogdel(Long umsId , Long id) {
+
+        BgmsBlog bgmsBlog = bgmsBlogMapper.selectByPrimaryKey(id);
+        if(bgmsBlog.getUmsId() == umsId){
+            bgmsBlog.setState(4);
+            int count = bgmsBlogMapper.updateByPrimaryKeySelective(bgmsBlog);
+            return count;
+
+        }
+        return 0;
+    }
+
+    @Override
+    public List<BgmsBlogParam> viewbloglist(String keyword, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<BgmsBlogParam> lists = blogDao.getAllBlogList();
+        return lists;
+    }
+
+    @Override
     public List<BgmsBlog> bloglist(Long userId,Integer state,String keyword, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
         BgmsBlogExample example = new BgmsBlogExample();
@@ -100,16 +123,5 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         return lists;
     }
 
-    @Override
-    public int blogdel(Long umsId , Long id) {
 
-        BgmsBlog bgmsBlog = bgmsBlogMapper.selectByPrimaryKey(id);
-        if(bgmsBlog.getUmsId() == umsId){
-            bgmsBlog.setState(4);
-            int count = bgmsBlogMapper.updateByPrimaryKeySelective(bgmsBlog);
-            return count;
-
-        }
-        return 0;
-    }
 }
