@@ -168,4 +168,15 @@ public class BlogsContoller {
         List<BgmsBlog> lists = bgmsBlogService.bloglist(id,2,keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
+
+
+    @ApiOperation(value = "TEST 测试持久化 views")
+    @RequestMapping(value = "/testfreshview", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<String> testfreshview(
+            ){
+
+        bgmsBlogCacheService.freshBlogView();
+        return null;
+    }
 }

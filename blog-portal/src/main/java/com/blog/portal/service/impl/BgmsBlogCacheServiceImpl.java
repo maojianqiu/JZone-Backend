@@ -5,12 +5,16 @@ import com.blog.mbg.mapper.BgmsBlogstatMapper;
 import com.blog.mbg.mapper.UmsMemberMapper;
 import com.blog.mbg.model.BgmsBlogstat;
 import com.blog.mbg.model.BgmsBlogstatExample;
+import com.blog.portal.dao.BlogDao;
 import com.blog.portal.service.BgmsBlogCacheService;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +24,8 @@ public class BgmsBlogCacheServiceImpl implements BgmsBlogCacheService {
     private RedisService redisService;
     @Autowired
     private BgmsBlogstatMapper bgmsBlogstatMapper;
+    @Autowired
+    private BlogDao blogDao;
 
     @Value("${redis.database}")
     private String REDIS_DATABASE;
@@ -44,12 +50,6 @@ public class BgmsBlogCacheServiceImpl implements BgmsBlogCacheService {
          *          否：1.增加views，2.增加 isviews
          *  5.无论成功与否，当前都 setview++ ,只是显示
          */
-
-
-        Set<String> s = redisService.getkeys(REDIS_KEY_IS_VIEWS+":*");
-
-
-
 
 
         String umscode = ip ;
@@ -79,4 +79,40 @@ public class BgmsBlogCacheServiceImpl implements BgmsBlogCacheService {
 
         return null;
     }
+
+    @Override
+    public Integer freshBlogView() {
+        String viewsKeybroad = REDIS_DATABASE + ":" + REDIS_KEY_VIEWS +":*" ;
+
+
+
+        //1.拿到 redis 中所有的有 views 的 blogid 和 views
+        Set<String> keys = redisService.getkeys(viewsKeybroad);
+
+        System.out.println("sey-keys"+keys.toString());
+        List<BgmsBlogstat> lists = new ArrayList<>();
+
+        Iterator<String> iterator = keys.iterator();
+        for ( ; iterator.hasNext() ;){
+            String key = iterator.next();
+
+            Integer views = (Integer) redisService.get(key);
+            String[] blogkey = key.split(":");
+
+            BgmsBlogstat bgmsBlogstat = new BgmsBlogstat();
+            bgmsBlogstat.setBlogId(Long.valueOf(blogkey[blogkey.length-1]));
+            bgmsBlogstat.setViews(views);
+
+            lists.add(bgmsBlogstat);
+        }
+        System.out.println("list-keys"+lists.toString());
+        //2.批量更新到 mysql
+        Integer count = blogDao.freshBlogViews(lists);
+        System.out.println(count);
+
+
+        return count;
+    }
+
+
 }

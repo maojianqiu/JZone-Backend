@@ -1,8 +1,8 @@
 package com.blog.portal.dao;
 
 
+import com.blog.mbg.model.BgmsBlogstat;
 import com.blog.portal.dto.BgmsBlogParam;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,4 +15,6 @@ public interface BlogDao {
      * 获取指定ID的搜索商品
      */
     List<BgmsBlogParam> getAllBlogList();
+
+    Integer freshBlogViews(List<BgmsBlogstat> lists);
 }

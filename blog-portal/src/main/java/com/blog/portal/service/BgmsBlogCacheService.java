@@ -13,4 +13,8 @@ public interface BgmsBlogCacheService {
     public Integer isViewAdd(Long blogId, String ip, Long umsId);
 
 
+    /**
+     * 从redis中持久化到mysql
+     */
+    public Integer freshBlogView();
 }

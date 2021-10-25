@@ -44,4 +44,18 @@
             and b.id=#{id}
         </if>
     </select>
+    
+    <update id="freshBlogViews" parameterType="java.util.List">
+        update bgms_blogstat
+        set  views=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case " close=" end">
+            when blog_id=#{item.blogId} then #{item.views}
+        </foreach>
+        where blog_id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.blogId,jdbcType=BIGINT}
+        </foreach>
+    </update>
 </mapper>
