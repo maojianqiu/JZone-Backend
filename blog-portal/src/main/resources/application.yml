@@ -41,9 +41,15 @@ redis:
   key:
     authCode: 'ums:authCode'
     member: 'ums:member'
+    views: 'bms:views'   # blog:bms:views:blogid = 100
+    isviews: 'bms:isviews' # blog:bms:isviews:blogid:umsid/ip = 0/1
+
   expire:
     authCode: 90 # 验证码超期时间
+    isviews: 10800 # 浏览时间 3 小时时效
     common: 86400 # 24小时
+
+
 
 # 消息队列定义
 rabbitmq:

@@ -43,10 +43,12 @@
     <select id="selectBlogInfoByBlogID" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
         select
         bb.id, bb.appreciation, bb.commentabled, bb.title, bb.description, bb.first_picture,  bb.update_time,
-        bb.flag, bb.flag_url, bb.recommend, bb.share_statement, bb.ums_id
-        ,um.nickname,bb.content
+        bb.flag, bb.flag_url, bb.recommend, bb.share_statement, bb.ums_id,
+        um.nickname,bb.content
+		, bbs.views, bbs.likes
         from bgms_blog bb
         join `ums_member` um on bb.ums_id = um.id
+				left join `bgms_blogstat` bbs on bbs.blog_id = bb.id
         where bb.id = #{id,jdbcType=BIGINT}
     </select>
 

@@ -29,6 +29,8 @@
         b.ums_id umsId,
         m.nickname,
         m.icon,
+        bbs.views,
+        bbs.likes,
         t.id tag_id,
         t.blog_id tag_blog_id,
         t.`name` tag_name
@@ -36,6 +38,7 @@
         FROM bgms_blog b
         left join bgms_tag t on t.blog_id = b.id
         left join ums_member m on m.id = b.ums_id
+        left join bgms_blogstat bbs on bbs.blog_id = b.id
         where b.state = 2
         <if test="id!=null">
             and b.id=#{id}

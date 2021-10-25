@@ -37,4 +37,6 @@ public interface BgmsBlogService {
      * */
     public List<BgmsBlogParam> viewbloglist(String keyword, Integer pageSize, Integer pageNum);
 
+
+
 }

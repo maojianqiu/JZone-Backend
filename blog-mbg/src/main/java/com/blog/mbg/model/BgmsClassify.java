@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class BgmsClassify implements Serializable {
     private Long id;
 
-    @ApiModelProperty(value = "所属用户id")
+    @ApiModelProperty(value = "ums_member的ID")
     private Long umsId;
 
     @ApiModelProperty(value = "分类名称")

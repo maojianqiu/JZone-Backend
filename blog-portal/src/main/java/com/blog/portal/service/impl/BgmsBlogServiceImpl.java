@@ -1,8 +1,10 @@
 package com.blog.portal.service.impl;
 
 import com.blog.mbg.mapper.BgmsBlogMapper;
+import com.blog.mbg.mapper.BgmsBlogstatMapper;
 import com.blog.mbg.model.BgmsBlog;
 import com.blog.mbg.model.BgmsBlogExample;
+import com.blog.mbg.model.BgmsBlogstat;
 import com.blog.mbg.model.BgmsTagExample;
 import com.blog.portal.dao.BgmsBlogTagClassifyDao;
 import com.blog.portal.dao.BlogDao;
@@ -11,6 +13,7 @@ import com.blog.portal.service.BgmsBlogService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +35,11 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     BgmsBlogTagClassifyDao bgmsBlogTagClassifyDao;
     @Autowired
     BlogDao blogDao;
+    @Autowired
+    BgmsBlogstatMapper bgmsBlogstatMapper;
+    @Autowired
+    RedisTemplate redisTemplate;
+
 
     @Override
     public Long blogAdd(BgmsBlogParam bgmsClassifyParam) {
@@ -42,7 +50,13 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         bgmsBlog.setUpdateTime(new Date());
         int count = bgmsBlogMapper.insertSelective(bgmsBlog);
 
-        if (count > 0) {
+        BgmsBlogstat bgmsBlogstat = new BgmsBlogstat();
+        bgmsBlogstat.setBlogId(bgmsBlog.getId());
+        bgmsBlogstat.setLikes(0);
+        bgmsBlogstat.setViews(0);
+        int count2 = bgmsBlogstatMapper.insertSelective(bgmsBlogstat);
+
+        if (count > 0 ) {
             System.out.println("BgmsBlogServiceImpl--"+bgmsBlog.getId());
             return bgmsBlog.getId();
         } else {
@@ -65,15 +79,6 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         }
     }
 
-    @Override
-    public BgmsBlogParam bloginfo(Long blogId) {
-        BgmsBlogParam bgmsBlog = bgmsBlogTagClassifyDao.selectBlogInfoByBlogID(blogId);
-        if(bgmsBlog != null){
-            return bgmsBlog;
-        }
-
-        return null;
-    }
 
     @Override
     public int blogdel(Long umsId , Long id) {
@@ -94,6 +99,8 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         List<BgmsBlogParam> lists = blogDao.getAllBlogList();
         return lists;
     }
+
+
 
     @Override
     public List<BgmsBlog> bloglist(Long userId,Integer state,String keyword, Integer pageSize, Integer pageNum) {
@@ -121,6 +128,17 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
 
         List<BgmsBlog> lists = bgmsBlogMapper.selectByExample(example);
         return lists;
+    }
+
+
+    @Override
+    public BgmsBlogParam bloginfo(Long blogId) {
+        BgmsBlogParam bgmsBlog = bgmsBlogTagClassifyDao.selectBlogInfoByBlogID(blogId);
+        if(bgmsBlog != null){
+            return bgmsBlog;
+        }
+
+        return null;
     }
 
 

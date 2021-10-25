@@ -11,6 +11,11 @@ import java.util.Set;
 public interface RedisService {
 
     /**
+     * 获取 Set key
+     */
+    Set<String> getkeys(String keyboard);
+
+    /**
      * 保存属性
      */
     void set(String key, Object value, long time);

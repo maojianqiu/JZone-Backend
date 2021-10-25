@@ -66,6 +66,15 @@ public class BgmsBlogParam {
     @ApiModelProperty(value = "博文内容")
     private String content;
 
+    @ApiModelProperty(value = "浏览量")
+    private Integer views;
+
+    @ApiModelProperty(value = "点赞量")
+    private Integer likes;
+
+    @ApiModelProperty(value = "当前登录用户是否点赞")
+    private Boolean islike;
+
     @ApiModelProperty(value = "博文分类id列表")
     private List<Long> classifies;
 

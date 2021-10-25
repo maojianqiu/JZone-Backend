@@ -38,9 +38,10 @@ public class BgmsBlog implements Serializable {
     @ApiModelProperty(value = "是否可以分享")
     private Boolean shareStatement;
 
-    @ApiModelProperty(value = "状态：0-草稿，1-审核中，2-已发布，3-未通过")
+    @ApiModelProperty(value = "状态：0-草稿，1-审核中，2-已发布，3-未通过，4-已删除")
     private Integer state;
 
+    @ApiModelProperty(value = "ums_member的ID")
     private Long umsId;
 
     private String content;

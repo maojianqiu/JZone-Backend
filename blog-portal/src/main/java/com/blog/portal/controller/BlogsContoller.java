@@ -2,11 +2,13 @@ package com.blog.portal.controller;
 
 import com.blog.common.api.CommonPage;
 import com.blog.common.api.CommonResult;
+import com.blog.common.util.IpUtil;
 import com.blog.mbg.model.BgmsBlog;
 import com.blog.mbg.model.BgmsTag;
 import com.blog.portal.bo.MemberDetails;
 import com.blog.portal.dto.BgmsBlogParam;
 import com.blog.portal.dto.BgmsTagParam;
+import com.blog.portal.service.BgmsBlogCacheService;
 import com.blog.portal.service.BgmsBlogService;
 import com.blog.portal.service.BgmsClassifyService;
 import com.blog.portal.service.BgmsTagService;
@@ -18,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,8 @@ public class BlogsContoller {
     @Autowired
     BgmsBlogService bgmsBlogService;
     @Autowired
+    BgmsBlogCacheService bgmsBlogCacheService;
+    @Autowired
     BgmsClassifyService bgmsClassifyService;
     @Autowired
     BgmsTagService bgmsTagService;
@@ -43,7 +48,10 @@ public class BlogsContoller {
     @ApiOperation(value = "获取博文详情")
     @RequestMapping(value = "/bloginfo/{blogId}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<BgmsBlogParam> bloginfo(@PathVariable Long blogId){
+    public CommonResult<BgmsBlogParam> bloginfo(
+            @PathVariable Long blogId ,
+            Principal principal,
+            HttpServletRequest request){
         /*
         注意，获取后，需要把隐私信息去掉，例如usmid，
         若 blog 不是当前登录账号的，并且不是已发布状态，需要返回 404，
@@ -60,6 +68,39 @@ public class BlogsContoller {
             bgmsTagParamList.add(bgmsTagParam);
         }
         bgmsBlogParam.setTags(bgmsTagParamList);
+
+
+        /**
+         * 当前浏览IP是否增加浏览
+         * 1.获取当前浏览 ip
+         * 2.调用接口
+         *      3.判断 key：views 总数是否存在
+         *          是：跳过
+         *          否：从数据库中取出导入，可能为零
+         *      4.判断（时效内）当前浏览人是否存在
+         *          是：跳过
+         *          否：增加
+         *  5.无论成功与否，当前都 setview++ ,只是显示
+         */
+        //获取IP地址
+        String ipAddress = IpUtil.getIpAddr(request);
+
+        Long umsId = null;
+        if(principal != null ){
+            UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+            MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
+            umsId= memberDetails.getId();
+        }
+
+
+        bgmsBlogCacheService.isViewAdd(blogId , ipAddress , umsId);
+        bgmsBlogParam.setViews(bgmsBlogParam.getViews()+1);
+
+
+        /**
+         * 当前登录用户是否已点赞
+         */
+
 
         if(bgmsBlogParam != null){
             return CommonResult.success(bgmsBlogParam);
