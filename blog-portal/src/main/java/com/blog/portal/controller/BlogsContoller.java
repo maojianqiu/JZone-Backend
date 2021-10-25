@@ -72,8 +72,8 @@ public class BlogsContoller {
 
         /**
          * 当前浏览IP是否增加浏览
-         * 1.获取当前浏览 ip
-         * 2.调用接口
+         * 1.获取当前浏览 ip/umsid
+         * 2.调用接口 （blogid/ip/umsid）
          *      3.判断 key：views 总数是否存在
          *          是：跳过
          *          否：从数据库中取出导入，可能为零
@@ -99,7 +99,17 @@ public class BlogsContoller {
 
         /**
          * 当前登录用户是否已点赞
+         *
+         * 1.获取当前登录对象的umsid
+         * 2.调接口
+         *      3.判断当前对象 f = umsid 是否存在 SET k =  blogid 中
+         *      是： 返值 1
+         *      否： 返值 0
+         * 4.接口返值
+         *       值=1： 代表已点赞，1.setlikes(likes ++ )；2.setislike(1);
+         *       值=0： 代表未点赞，1.setislike(0);
          */
+
 
 
         if(bgmsBlogParam != null){
