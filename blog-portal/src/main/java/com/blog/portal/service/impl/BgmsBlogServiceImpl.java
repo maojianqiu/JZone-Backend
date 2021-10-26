@@ -1,11 +1,9 @@
 package com.blog.portal.service.impl;
 
+import com.blog.mbg.mapper.BgmsBlogLikesMapper;
 import com.blog.mbg.mapper.BgmsBlogMapper;
 import com.blog.mbg.mapper.BgmsBlogstatMapper;
-import com.blog.mbg.model.BgmsBlog;
-import com.blog.mbg.model.BgmsBlogExample;
-import com.blog.mbg.model.BgmsBlogstat;
-import com.blog.mbg.model.BgmsTagExample;
+import com.blog.mbg.model.*;
 import com.blog.portal.dao.BgmsBlogTagClassifyDao;
 import com.blog.portal.dao.BlogDao;
 import com.blog.portal.dto.BgmsBlogParam;
@@ -38,6 +36,8 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     @Autowired
     BgmsBlogstatMapper bgmsBlogstatMapper;
     @Autowired
+    BgmsBlogLikesMapper bgmsBlogLikesMapper;
+    @Autowired
     RedisTemplate redisTemplate;
 
 
@@ -55,6 +55,11 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         bgmsBlogstat.setLikes(0);
         bgmsBlogstat.setViews(0);
         int count2 = bgmsBlogstatMapper.insertSelective(bgmsBlogstat);
+
+        BgmsBlogLikes bgmsBlogLikes = new BgmsBlogLikes();
+        bgmsBlogLikes.setBlogId(bgmsBlog.getId());
+        bgmsBlogLikes.setUpdateTime(new Date());
+        int count3 = bgmsBlogLikesMapper.insertSelective(bgmsBlogLikes);
 
         if (count > 0 ) {
             System.out.println("BgmsBlogServiceImpl--"+bgmsBlog.getId());

@@ -43,6 +43,8 @@ redis:
     member: 'ums:member'
     views: 'bms:views'   # blog:bms:views:blogid = 100
     isviews: 'bms:isviews' # blog:bms:isviews:blogid:umsid/ip = 0/1
+    likes: 'bms:likes'   # blog:bms:likes:blogid = 100
+    islikes: 'bms:islikes'   # blog:bms:islikes:blogid = umsid : 1 , umsid : 1 , umsid : 1 ,
 
   expire:
     authCode: 90 # 验证码超期时间

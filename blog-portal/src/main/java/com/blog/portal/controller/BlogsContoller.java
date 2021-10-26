@@ -74,12 +74,12 @@ public class BlogsContoller {
          * 当前浏览IP是否增加浏览
          * 1.获取当前浏览 ip/umsid
          * 2.调用接口 （blogid/ip/umsid）
-         *      3.判断 key：views 总数是否存在
+         *      3.判断 String key：views:blogid 总数是否存在
          *          是：跳过
          *          否：从数据库中取出导入，可能为零
-         *      4.判断（时效内）当前浏览人是否存在
+         *      4.判断 String key：views:blogid:umsid（时效内）当前浏览人是否存在
          *          是：跳过
-         *          否：增加
+         *          否：1.增加views，2.增加 isviews
          *  5.无论成功与否，当前都 setview++ ,只是显示
          */
         //获取IP地址
@@ -102,14 +102,25 @@ public class BlogsContoller {
          *
          * 1.获取当前登录对象的umsid
          * 2.调接口
-         *      3.判断当前对象 f = umsid 是否存在 SET k =  blogid 中
+         *      3.判断 String key:likes:blogid 总数是否存在
+         *          是：跳过
+         *          否：从数据库中取出导入，可能为零
+         *
+         *      4.判断当前对象 f = umsid 是否存在 SET k =  blogid 中
          *      是： 返值 1
          *      否： 返值 0
-         * 4.接口返值
-         *       值=1： 代表已点赞，1.setlikes(likes ++ )；2.setislike(1);
-         *       值=0： 代表未点赞，1.setislike(0);
+         * 5.接口返值
+         *       值=1： 代表已点赞，1.setlikes(likes ++ )；2.setislike(true);
+         *       值=0： 代表未点赞，1.setislike(false);
          */
 
+        Integer isCurLike = bgmsBlogCacheService.isCurUmsLike(blogId,umsId);
+        if(isCurLike == 1){
+            bgmsBlogParam.setIslike(true);
+            bgmsBlogParam.setLikes(bgmsBlogParam.getLikes()+1);
+        }else {
+            bgmsBlogParam.setIslike(false);
+        }
 
 
         if(bgmsBlogParam != null){
@@ -118,6 +129,50 @@ public class BlogsContoller {
             return CommonResult.failed();
         }
 
+    }
+
+    @ApiOperation(value = "点赞或取消点赞当前浏览的博文")
+    @RequestMapping(value = "/isLikeAdd/{blogId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult isLikeAdd(
+            @PathVariable Long blogId ,
+           // Long isCurLike ,
+            Principal principal){
+        /*
+           1.掉接口（ 要么前端返回当前点赞状态，要么重新判断 1 0，若前端返回可能会有用户恶意点赞）
+                2.若已点赞，则是取消点赞：
+                    (1).String key:likes:blogid ,--;
+                    (2).SET key:islikes:blogid, 去除 field:umsid
+                 若未点赞，则是点赞
+                    (1).String key:likes:blogid ,++;
+                    (2).SET key:islikes:blogid, 添加 field:umsid
+                 若操作成功，反值：1
+                 若操作失败，反值：0
+            3.接口返值
+         *       值=1： 代表成功
+         *       值=0： 代表失败
+         */
+
+        if(principal==null){
+            return CommonResult.unauthorized(null);
+        }
+        if(blogId == null){
+            return CommonResult.validateFailed();
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+        MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
+        Long umsId= memberDetails.getId();
+
+        Integer isCurLike = bgmsBlogCacheService.isCurUmsLike(blogId,umsId);
+
+        Integer result = bgmsBlogCacheService.isCurUmsLikeAdd(blogId, umsId , isCurLike);
+
+        if(result == 1){
+            return CommonResult.success(1);
+        }else {
+            return  CommonResult.failed();
+        }
     }
 
     @ApiOperation(value = "获取博文列表")
@@ -187,6 +242,16 @@ public class BlogsContoller {
             ){
 
         bgmsBlogCacheService.freshBlogView();
+        return null;
+    }
+
+    @ApiOperation(value = "TEST 测试持久化 likes")
+    @RequestMapping(value = "/testfreshlike", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<String> testfreshlike(
+    ){
+
+        bgmsBlogCacheService.freshBlogLike();
         return null;
     }
 }

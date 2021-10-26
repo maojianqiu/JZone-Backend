@@ -58,4 +58,32 @@
             #{item.blogId,jdbcType=BIGINT}
         </foreach>
     </update>
+
+    <update id="freshBlogLikes" parameterType="java.util.List">
+        update bgms_blogstat
+        set  likes=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case " close=" end">
+            when blog_id=#{item.blogId} then #{item.likes}
+        </foreach>
+        where blog_id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.blogId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <update id="freshBlogUmsLikes" parameterType="java.util.List">
+        update bgms_blog_likes
+        set  ums_ids=
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case " close=" end">
+            when blog_id=#{item.blogId} then #{item.umsIds}
+        </foreach>, update_time = now()
+        where blog_id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.blogId,jdbcType=BIGINT}
+        </foreach>
+    </update>
 </mapper>
