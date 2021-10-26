@@ -37,6 +37,9 @@ public interface BgmsBlogService {
      * */
     public List<BgmsBlogParam> viewbloglist(String keyword, Integer pageSize, Integer pageNum);
 
-
+    /*
+     * 获取某个用户的博文列表
+     * */
+    public List<BgmsBlogParam> viewbloglistByUmsId(Long userId, Integer pageSize, Integer pageNum);
 
 }

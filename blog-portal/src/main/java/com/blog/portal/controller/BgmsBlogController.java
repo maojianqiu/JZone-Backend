@@ -151,7 +151,7 @@ public class BgmsBlogController {
     @ApiOperation(value = "获取登录用户博文列表")
     @RequestMapping(value = "/bloglist", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<CommonPage<BgmsBlog>> bloglist(
+    public CommonResult<CommonPage<BgmsBlogParam>> bloglist(
             Principal principal,
             Integer state,
             @RequestParam(value = "keyword", required = false) String keyword,
@@ -165,7 +165,7 @@ public class BgmsBlogController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
 
-        List<BgmsBlog> lists = bgmsBlogService.bloglist(memberDetails.getId(),state,keyword, pageSize, pageNum);
+        List<BgmsBlogParam> lists = bgmsBlogService.viewbloglistByUmsId(memberDetails.getId(), pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
 

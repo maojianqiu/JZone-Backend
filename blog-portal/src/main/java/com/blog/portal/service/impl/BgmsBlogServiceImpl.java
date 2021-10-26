@@ -106,6 +106,14 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
     }
 
 
+    @Override
+    public List<BgmsBlogParam> viewbloglistByUmsId(Long userId, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<BgmsBlogParam> lists = blogDao.selectByUmsId(userId);
+        return lists;
+    }
+
+
 
     @Override
     public List<BgmsBlog> bloglist(Long userId,Integer state,String keyword, Integer pageSize, Integer pageNum) {

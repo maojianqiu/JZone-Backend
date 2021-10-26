@@ -175,19 +175,6 @@ public class BlogsContoller {
         }
     }
 
-    @ApiOperation(value = "获取博文列表")
-    @RequestMapping(value = "/bloglist", method = RequestMethod.GET)
-    @ResponseBody
-    public CommonResult<CommonPage<BgmsBlog>> bloglist(
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-        /*
-        注意，获取后，需要把隐私信息去掉，，即只传自己需要的数据
-         */
-        List<BgmsBlog> lists = bgmsBlogService.bloglist(null,100,keyword, pageSize, pageNum);
-        return CommonResult.success(CommonPage.restPage(lists));
-    }
 
     @ApiOperation(value = "获取博文列表和博文发布者")
     @RequestMapping(value = "/viewbloglist", method = RequestMethod.GET)
@@ -207,7 +194,7 @@ public class BlogsContoller {
     @ApiOperation(value = "通过userID获取博文列表：博客主页")
     @RequestMapping(value = "/blogViewListByUserID/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<CommonPage<BgmsBlog>> blogViewListByUserID(
+    public CommonResult<CommonPage<BgmsBlogParam>> blogViewListByUserID(
             @PathVariable Long id,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
@@ -215,7 +202,7 @@ public class BlogsContoller {
         /*
         注意，获取后，需要把隐私信息去掉，，即只传自己需要的数据
          */
-        List<BgmsBlog> lists = bgmsBlogService.bloglist(id,2,keyword, pageSize, pageNum);
+        List<BgmsBlogParam> lists = bgmsBlogService.viewbloglistByUmsId(id, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
 
