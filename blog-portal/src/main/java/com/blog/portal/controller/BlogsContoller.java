@@ -57,8 +57,22 @@ public class BlogsContoller {
         若 blog 不是当前登录账号的，并且不是已发布状态，需要返回 404，
         若是当前账号的，直接正常显示
          */
+        Long umsId = null;
+        if(principal != null ){
+            UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+            MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
+            umsId= memberDetails.getId();
+        }
 
         BgmsBlogParam bgmsBlogParam = bgmsBlogService.bloginfo(blogId);
+
+        /*
+        * 判断若当前博文状态不是已发布的，并且当前当前浏览者不是博文发布者，则提示没有权限
+        * */
+        if(bgmsBlogParam == null || (bgmsBlogParam.getState() != 2 && bgmsBlogParam.getUmsId() != umsId)){
+            return CommonResult.validateFailed("啊哦~你想找的内容离你而去了哦");
+        }
+
 
         List<BgmsTag> bgmsTags = bgmsTagService.taglistByBlogId(blogId);
         List<BgmsTagParam> bgmsTagParamList = new ArrayList<>();
@@ -84,14 +98,6 @@ public class BlogsContoller {
          */
         //获取IP地址
         String ipAddress = IpUtil.getIpAddr(request);
-
-        Long umsId = null;
-        if(principal != null ){
-            UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
-            MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
-            umsId= memberDetails.getId();
-        }
-
 
         bgmsBlogCacheService.isViewAdd(blogId , ipAddress , umsId);
         bgmsBlogParam.setViews(bgmsBlogParam.getViews()+1);
