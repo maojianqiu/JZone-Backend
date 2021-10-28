@@ -13,6 +13,7 @@
     <artifactId>blog-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>blog-common</name>
+    <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
 
 

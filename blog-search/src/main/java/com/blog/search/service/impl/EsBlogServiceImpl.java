@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * 搜索博文管理Service实现类

@@ -11,6 +11,8 @@
 
     <groupId>com.blog</groupId>
     <artifactId>blog-portal</artifactId>
+    <name>blog-portal</name>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
@@ -31,11 +33,24 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 指定该Main Class为全局的唯一入口 -->
+                    <mainClass>com.blog.portal.BlogPortalApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

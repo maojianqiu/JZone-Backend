@@ -6,6 +6,8 @@
 
     <groupId>com.blog</groupId>
     <artifactId>blog-security</artifactId>
+    <name>blog-security</name>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
     <parent>
@@ -17,10 +19,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.blog</groupId>
-            <artifactId>blog-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+        <groupId>com.blog</groupId>
+        <artifactId>blog-common</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -38,4 +40,6 @@
             <artifactId>jjwt</artifactId>
         </dependency>
     </dependencies>
+
+
 </project>

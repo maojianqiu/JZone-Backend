@@ -54,8 +54,8 @@ redis:
 
 # 自定义腾讯云COS信息
 tecentcos:
-  bucketName: 'test-1307903821'
-  SecretId: 'AKIDpSpvmMfhV1HFwNXQ1MQEl34oHTO3QXNw'
-  SecretKey: 'JL7dtscAVaOwFI4apoWw6zbw1pNefQu7'
+  bucketName: '123'
+  SecretId: '123'
+  SecretKey: '123'
   prefix: 'jzone/'
-  URL: 'https://test-1307903821.cos.ap-beijing.myqcloud.com/'
+  URL: '123'
