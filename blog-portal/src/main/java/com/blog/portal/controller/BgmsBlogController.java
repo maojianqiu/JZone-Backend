@@ -170,7 +170,7 @@ public class BgmsBlogController {
     }
 
     @ApiOperation(value = "删除登录用户单个博文")
-    @RequestMapping(value = "/blogdel", method = RequestMethod.POST)
+    @RequestMapping(value = "/blogdel", method = RequestMethod.GET)
     @ResponseBody
     //@RequestParam：将请求参数绑定到你控制器的方法参数上（是springmvc中接收普通参数的注解）
     public CommonResult blogdel(

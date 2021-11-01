@@ -92,6 +92,7 @@ public class BgmsBlogServiceImpl implements BgmsBlogService {
         if(bgmsBlog.getUmsId() == umsId){
             bgmsBlog.setState(4);
             int count = bgmsBlogMapper.updateByPrimaryKeySelective(bgmsBlog);
+            //从 es 中删除当前博文
             return count;
 
         }

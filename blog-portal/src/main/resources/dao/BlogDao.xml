@@ -112,6 +112,6 @@
         left join bgms_tag t on t.blog_id = b.id
         left join ums_member m on m.id = b.ums_id
         left join bgms_blogstat bbs on bbs.blog_id = b.id
-        where  b.ums_id=#{userId}
+        where  b.ums_id=#{userId} and b.state != 4
     </select>
 </mapper>

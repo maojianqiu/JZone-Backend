@@ -3,6 +3,7 @@ package com.blog.portal.config;
 import cn.hutool.core.collection.CollUtil;
 import com.blog.mbg.model.UmsResource;
 import com.blog.portal.service.UmsMemberService;
+import com.blog.security.aspect.RedisCacheAspect;
 import com.blog.security.component.DynamicSecurityService;
 import com.blog.security.component.JwtAuthenticationTokenFilter;
 import com.blog.security.component.RestAuthenticationEntryPoint;
@@ -129,5 +130,10 @@ public class BlogSecurityConfig  extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtTokenUtil jwtTokenUtil() {
         return new JwtTokenUtil();
+    }
+
+    @Bean
+    public RedisCacheAspect redisCacheAspect(){
+        return new RedisCacheAspect();
     }
 }

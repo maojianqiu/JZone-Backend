@@ -52,7 +52,7 @@ public class UmsMemberController {
     public CommonResult login(@RequestBody UmsMemberParam umsMemberParam) {
         String token = memberService.login(umsMemberParam.getUsername(), umsMemberParam.getPassword());
         if (token == null) {
-            return CommonResult.validateFailed("用户名或密码错误");
+            return CommonResult.failed("用户名或密码错误");
         }
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("token", token);

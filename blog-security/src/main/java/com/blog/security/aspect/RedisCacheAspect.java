@@ -22,9 +22,9 @@ import java.lang.reflect.Method;
 @Component
 @Order(2)
 public class RedisCacheAspect {
-    private static Logger LOGGER = LoggerFactory.getLogger(RedisCacheAspect.class);
+//    private static Logger LOGGER = LoggerFactory.getLogger(RedisCacheAspect.class);
 
-    @Pointcut("execution(public * com.blog.admin.service.*CacheService.*(..)) || execution(public * com.blog.admin.service.*CacheService.*(..))")
+    @Pointcut("execution(public * com.blog.admin.service.*CacheService.*(..)) || execution(public * com.blog.portal.service.*CacheService.*(..))")
     public void cacheAspect() {
     }
 
@@ -41,7 +41,8 @@ public class RedisCacheAspect {
             if (method.isAnnotationPresent(CacheException.class)) {
                 throw throwable;
             } else {
-                LOGGER.error(throwable.getMessage());
+                System.out.println("-------cacheAspect----------");
+//                LOGGER.error(throwable.getMessage());
             }
         }
         return result;

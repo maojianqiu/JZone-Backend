@@ -1,5 +1,6 @@
 package com.blog.security.config;
 
+import com.blog.security.aspect.RedisCacheAspect;
 import com.blog.security.component.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -128,4 +129,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new DynamicSecurityMetadataSource();
     }
 
+    @Bean
+    public RedisCacheAspect redisCacheAspect(){
+        return new RedisCacheAspect();
+    }
 }
