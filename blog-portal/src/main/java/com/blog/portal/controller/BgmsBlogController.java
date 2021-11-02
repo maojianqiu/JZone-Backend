@@ -165,7 +165,7 @@ public class BgmsBlogController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
         MemberDetails memberDetails = (MemberDetails)authenticationToken.getPrincipal();
 
-        List<BgmsBlogParam> lists = bgmsBlogService.viewbloglistByUmsId(memberDetails.getId(), pageSize, pageNum);
+        List<BgmsBlogParam> lists = bgmsBlogService.viewbloglistByCurLogId(memberDetails.getId(), pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(lists));
     }
 

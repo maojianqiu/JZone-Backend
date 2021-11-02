@@ -26,4 +26,8 @@ public interface BlogDao {
     Integer freshBlogUmsLikes(List<BgmsBlogLikes> lists);
 
     List<BgmsBlogParam> selectByUmsId(Long userId);
+
+    List<BgmsBlogParam> selectByCurLogId(Long userId);
+
+
 }

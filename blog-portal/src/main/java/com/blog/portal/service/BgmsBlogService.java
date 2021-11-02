@@ -42,4 +42,9 @@ public interface BgmsBlogService {
      * */
     public List<BgmsBlogParam> viewbloglistByUmsId(Long userId, Integer pageSize, Integer pageNum);
 
+    /*
+     * 获取当前登录用户的所有出删除博文列表
+     * */
+    public List<BgmsBlogParam> viewbloglistByCurLogId(Long userId, Integer pageSize, Integer pageNum);
+
 }
