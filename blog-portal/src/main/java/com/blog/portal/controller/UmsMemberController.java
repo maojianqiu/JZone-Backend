@@ -37,12 +37,18 @@ public class UmsMemberController {
     @ResponseBody
     public CommonResult register(@RequestBody UmsMemberParam umsMemberParam) {
 
-        memberService.register(
+        Integer result = memberService.register(
                 umsMemberParam.getUsername(),
                 umsMemberParam.getNickname(),
                 umsMemberParam.getPassword(),
                 umsMemberParam.getPhone(),
                 umsMemberParam.getAuthCode());
+
+        if(result == 9){
+            return CommonResult.success(-1,"验证码错误");
+        }else if(result == 8){
+            return CommonResult.success(-1,"该用户已经存在");
+        }
         return CommonResult.success(null,"注册成功");
     }
 
